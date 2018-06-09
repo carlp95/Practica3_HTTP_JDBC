@@ -15,4 +15,6 @@ dependencies {
     compile group: 'org.sql2o', name: 'sql2o', version: '1.5.4'
     compile "org.slf4j:slf4j-simple:1.7.21"
     compile "org.jasypt:jasypt:1.9.2"
+    compile "com.sparkjava:spark-core:2.7.1"
+    compile "com.sparkjava:spark-template-freemarker:2.7.1"
 }
