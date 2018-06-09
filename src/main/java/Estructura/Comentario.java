@@ -7,6 +7,16 @@ public class Comentario {
     private Usuario autor;
     private Articulo articulo;
 
+    public Comentario() {
+    }
+
+    public Comentario(long id, String comentario, Usuario autor, Articulo articulo) {
+        this.id = id;
+        this.comentario = comentario;
+        this.autor = autor;
+        this.articulo = articulo;
+    }
+
     public long getId() {
         return id;
     }

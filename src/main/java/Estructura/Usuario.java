@@ -2,18 +2,20 @@ package Estructura;
 
 public class Usuario {
 
-    private long id;
     private String username;
     private String contrasena;
     private boolean administrador;
     private boolean autor;
 
-    public long getId() {
-        return id;
+
+    public Usuario() {
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Usuario(String username, String contrasena, boolean administrador, boolean autor) {
+        this.username = username;
+        this.contrasena = contrasena;
+        this.administrador = administrador;
+        this.autor = autor;
     }
 
     public String getUsername() {

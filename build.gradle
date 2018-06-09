@@ -17,4 +17,6 @@ dependencies {
     compile "org.jasypt:jasypt:1.9.2"
     compile "com.sparkjava:spark-core:2.7.1"
     compile "com.sparkjava:spark-template-freemarker:2.7.1"
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    compile group: 'com.h2database', name: 'h2', version: '1.4.197'
 }

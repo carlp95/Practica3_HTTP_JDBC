@@ -13,6 +13,19 @@ public class Articulo {
     private List<Etiqueta> listaEtiquetas;
     private List<Comentario> listaComentarios;
 
+    public Articulo() {
+    }
+
+    public Articulo(long id, String titulo, String cuerpo, Usuario autor, Date fecha, List<Etiqueta> listaEtiquetas, List<Comentario> listaComentarios) {
+        this.id = id;
+        this.titulo = titulo;
+        this.cuerpo = cuerpo;
+        this.autor = autor;
+        this.fecha = fecha;
+        this.listaEtiquetas = listaEtiquetas;
+        this.listaComentarios = listaComentarios;
+    }
+
     public long getId() {
         return id;
     }

@@ -5,6 +5,14 @@ public class Etiqueta {
     private long id;
     private String etiqueta;
 
+    public Etiqueta() {
+    }
+
+    public Etiqueta(long id, String etiqueta) {
+        this.id = id;
+        this.etiqueta = etiqueta;
+    }
+
     public long getId() {
         return id;
     }
