@@ -3,6 +3,7 @@ package main;
 import BD.Dao;
 import Estructura.Usuario;
 import freemarker.template.Configuration;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 
@@ -33,19 +34,27 @@ public class Main {
 
         post("/createUser", (request, response) ->{
             Usuario user = new Usuario();
+            BasicPasswordEncryptor encriptor = new BasicPasswordEncryptor();
+            String passEncripted = encriptor.encryptPassword(request.queryParams("contrasena"));
             user.setUsername(request.queryParams("username"));
-            user.setContrasena(request.queryParams("contrasena"));
-            if(request.queryParams("administrador").equals("true")){
+            user.setContrasena(passEncripted);
+            if(request.queryParams("administrador").equals("administrador") && request.queryParams("autor") == null){
                 user.setAdministrador(true);
                 user.setAutor(true);
-            }else if(request.queryParams("autor").equals("true")){
+                conexionBD.insertarUsuario(user);
+                response.redirect("/");
+                return null;
+            }else if(request.queryParams("autor").equals("autor") && request.queryParams("administrador") == null){
                 user.setAutor(true);
                 user.setAdministrador(false);
+                conexionBD.insertarUsuario(user);
+                response.redirect("/");
+                return null;
             }
-            conexionBD.insertarUsuario(user);
 
-            response.redirect("/");
+            //response.redirect("/");
             return null;
+
         }, freemarkerEngine);
     }
 }

@@ -4,6 +4,7 @@ import Estructura.Articulo;
 import Estructura.Comentario;
 import Estructura.Etiqueta;
 import Estructura.Usuario;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import java.util.List;
@@ -13,7 +14,7 @@ public class Dao {
     private Sql2o sql2o;
 
     public Dao(){
-        this.sql2o = new Sql2o("jdbc:h2:~/practica3","sa","");
+        this.sql2o = new Sql2o("jdbc:h2:tcp://localhost/~/practica3","sa","");
         crearTablas();
         cargarUsuarioAdm();
     }
@@ -54,10 +55,12 @@ public class Dao {
     private  void cargarUsuarioAdm(){
         if(getUsuarios().isEmpty()){
             String sql = "insert into Usuario(username,contrasena,administrador,autor) values(:username,:contrasena,:administrador,:autor)";
+            BasicPasswordEncryptor encryptor = new BasicPasswordEncryptor();
+            String passEncrypted = encryptor.encryptPassword("admin123");
             try(Connection conexion = sql2o.open()){
                 conexion.createQuery(sql)
                         .addParameter("username","admin")
-                        .addParameter("contrasena","admin123")
+                        .addParameter("contrasena",passEncrypted)
                         .addParameter("administrador","true")
                         .addParameter("autor","true")
                         .executeUpdate();
