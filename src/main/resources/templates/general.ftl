@@ -1,3 +1,5 @@
+<#macro base>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +9,12 @@
     <link  href="https://bootswatch.com/4/darkly/bootstrap.css" rel="stylesheet"/>
 </head>
 <body>
+    <#--contenido-->
+    <#nested >
 
+    <#--footer-->
+    <#include "footer.ftl">
 </body>
 </html>
+
+</#macro>

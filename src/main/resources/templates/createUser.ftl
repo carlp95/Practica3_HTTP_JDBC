@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <#include "general.html">
-</head>
+    <head>
+        <#include "general.ftl">
+    </head>
 <body>
 <div class="container" align="center">
     <div class="col-lg-5">

@@ -19,6 +19,12 @@ public class Main {
 
         Dao conexionBD = new Dao();
 
+        get("/", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("titulo", "Banana Blog");
+            return new ModelAndView(model, "index.ftl");
+        }, freemarkerEngine);
+
         get("/createUser", (request,response) ->{
             Map<String, Object> atributos = new HashMap<>();
             atributos.put("titulo","Crear Usuario");
