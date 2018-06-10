@@ -12,6 +12,7 @@ import java.util.Map;
 import static spark.Spark.*;
 
 public class Main {
+
     public static void main(String[] args) {
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_26);
         configuration.setClassForTemplateLoading(Main.class, "/templates");
@@ -22,6 +23,7 @@ public class Main {
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("titulo", "Banana Blog");
+            model.put("articulos", conexionBD.getArticulos());
             return new ModelAndView(model, "index.ftl");
         }, freemarkerEngine);
 
@@ -48,4 +50,5 @@ public class Main {
             return null;
         }, freemarkerEngine);
     }
+
 }
