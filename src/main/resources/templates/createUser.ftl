@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <#include "general.ftl">
-    </head>
-<body>
+<#import "general.ftl" as gen>
+
+<@gen.base>
 <div class="container" align="center">
     <div class="col-lg-5">
         <div class="card border-primary">
@@ -40,6 +37,4 @@
         </div>
     </div>
 </div>
-
-</body>
-</html>
+</@gen.base>

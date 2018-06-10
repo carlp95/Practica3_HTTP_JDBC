@@ -38,21 +38,15 @@ public class Main {
             String passEncripted = encriptor.encryptPassword(request.queryParams("contrasena"));
             user.setUsername(request.queryParams("username"));
             user.setContrasena(passEncripted);
-            if(request.queryParams("administrador").equals("administrador") && request.queryParams("autor") == null){
+            if(request.queryParams("administrador").equals("on")){
                 user.setAdministrador(true);
                 user.setAutor(true);
-                conexionBD.insertarUsuario(user);
-                response.redirect("/");
-                return null;
-            }else if(request.queryParams("autor").equals("autor") && request.queryParams("administrador") == null){
+            }else if(request.queryParams("autor").equals("on")){
                 user.setAutor(true);
                 user.setAdministrador(false);
-                conexionBD.insertarUsuario(user);
-                response.redirect("/");
-                return null;
             }
-
-            //response.redirect("/");
+            conexionBD.insertarUsuario(user);
+            response.redirect("/");
             return null;
 
         }, freemarkerEngine);
