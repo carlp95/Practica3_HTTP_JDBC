@@ -4,6 +4,8 @@ import Estructura.*;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.Sql2oException;
+
 import java.util.List;
 
 public class Dao {
@@ -84,7 +86,7 @@ public class Dao {
             String sql = "insert into Usuario(username,contrasena,administrador,autor) values(:username,:contrasena,:administrador,:autor)";
             BasicPasswordEncryptor encryptor = new BasicPasswordEncryptor();
             String passEncrypted = encryptor.encryptPassword("admin123");
-            try(Connection conexion = sql2o.open()){
+            try(Connection conexion = sql2o.open()) {
                 conexion.createQuery(sql)
                         .addParameter("username","admin")
                         .addParameter("contrasena",passEncrypted)
@@ -128,11 +130,11 @@ public class Dao {
         }
     }
 
-    public List<Etiqueta> getEtiqueta(Articulo articulo){
-        String sql = "select * from Etiqueta where id = :articulo_id";
-        try(Connection conexion = sql2o.open()){
+    public List<Etiqueta> getEtiquetas(long articulo_id) throws Sql2oException{
+        String sql = "select * from Etiqueta where articulo = :articulo_id";
+        try(Connection conexion = sql2o.open()) {
             return conexion.createQuery(sql)
-                    .addParameter("articulo_id", articulo.getId())
+                    .addParameter("articulo_id", articulo_id)
                     .executeAndFetch(Etiqueta.class);
         }
     }

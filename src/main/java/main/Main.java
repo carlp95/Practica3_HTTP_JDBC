@@ -3,18 +3,17 @@ package main;
 import BD.Dao;
 import Estructura.Articulo;
 import Estructura.Comentario;
+import Estructura.Etiqueta;
 import Estructura.Usuario;
 import freemarker.template.Configuration;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.sql2o.Sql2oException;
 import spark.ModelAndView;
 import spark.Session;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static spark.Spark.*;
 
@@ -24,12 +23,20 @@ public class Main {
         configuration.setClassForTemplateLoading(Main.class, "/templates");
         FreeMarkerEngine freemarkerEngine = new FreeMarkerEngine(configuration);
 
-        Dao conexionBD = new Dao();
-
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
+            List<Articulo> listaArticulos = Dao.getInstance().getArticulos();
+
+            for (Articulo articulo : listaArticulos) {
+                try {
+                    articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
+                } catch (Sql2oException e) {
+                    System.out.println("Ocurrio un error " + e.getMessage());
+                }
+            }
+
             model.put("titulo", "Banana Blog");
-            model.put("articulos", conexionBD.getArticulos());
+            model.put("articulos", listaArticulos);
 
             return new ModelAndView(model, "index.ftl");
         }, freemarkerEngine);
@@ -48,7 +55,7 @@ public class Main {
 
             if(request.queryParams("recordar").equals("on")){
                     Session session = request.session(true);
-                    List<Usuario> usuarios = conexionBD.getUsuarios();
+                    List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
                     for(Usuario user : usuarios){
                         boolean verificacion = encryptor.checkPassword(contrasena, user.getContrasena());
@@ -64,7 +71,7 @@ public class Main {
                 }else {
 
                     Session session = request.session(true);
-                    List<Usuario> usuarios = conexionBD.getUsuarios();
+                    List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
                     for(Usuario user : usuarios){
                         boolean verificacion = encryptor.checkPassword(contrasena, user.getContrasena());
@@ -81,7 +88,7 @@ public class Main {
 
         get("/show/:id",(request, response) ->{
             Map<String, Object> atributos = new HashMap<>();
-            List<Articulo> articulos = conexionBD.getArticulos();
+            List<Articulo> articulos = Dao.getInstance().getArticulos();
             for(Articulo art : articulos){
                 if(Long.parseLong(request.params("id")) == art.getId()){
                     atributos.put("titulo",art.getTitulo());
@@ -96,7 +103,7 @@ public class Main {
             Comentario comentario = new Comentario();
             Usuario user = request.session(true).attribute("usuario");
 
-            for(Articulo art : conexionBD.getArticulos()){
+            for(Articulo art : Dao.getInstance().getArticulos()){
                 if(Long.parseLong(request.queryParams("id")) == art.getId()){
                     comentario.setComentario(request.queryParams("comentario"));
                     comentario.setAutor(user);
@@ -104,7 +111,7 @@ public class Main {
                 }
             }
             return null;
-        },freemarkerEngine);
+        }, freemarkerEngine);
 
         get("/createUser", (request,response) ->{
             Map<String, Object> atributos = new HashMap<>();
@@ -125,7 +132,7 @@ public class Main {
                 user.setAutor(true);
                 user.setAdministrador(false);
             }
-            conexionBD.insertarUsuario(user);
+            Dao.getInstance().insertarUsuario(user);
             response.redirect("/");
             return null;
 
