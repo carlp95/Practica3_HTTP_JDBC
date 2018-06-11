@@ -25,6 +25,7 @@ public class Main {
             Map<String, Object> model = new HashMap<>();
             model.put("titulo", "Banana Blog");
             model.put("articulos", conexionBD.getArticulos());
+
             return new ModelAndView(model, "index.ftl");
         }, freemarkerEngine);
 

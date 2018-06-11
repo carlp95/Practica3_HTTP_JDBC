@@ -1,13 +1,26 @@
 <#import "general.ftl" as gen>
 
 <@gen.base>
-    <h1>Here we have the list</h1>
+
     <#list articulos>
         <ul>
             <#items as articulo>
-                <li>${ articulo.titulo }</li>
+                <div class="card mx-auto" style="width: 750px">
+                    <div class="card-body">
+                        <h2>${ articulo.titulo }</h2>
+                        <p>${ articulo.cuerpo }</p>
+                    </div>
+                    <div class="card-footer">
+                        <#--<#list articulo.listaEtiquetas as e>-->
+                            <#--<span class="badge badge-primary">${ e.etiqueta }</span>-->
+                        <#--<#else>-->
+                            <#--<span class="badge badge-secondary">No one TT</span>-->
+                        <#--</#list>-->
+                    </div>
+                </div>
             </#items>
         </ul>
     </#list>
+
 </@gen.base>
 
