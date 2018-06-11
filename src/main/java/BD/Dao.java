@@ -20,18 +20,33 @@ public class Dao {
     }
 
     private void crearTablas(){
-        String queryArticulo = "CREATE TABLE IF NOT EXISTS Articulo(articulo_id BIGINT PRIMARY KEY auto_increment, titulo VARCHAR(200),"+
-                                " cuerpo VARCHAR, fecha DATE, autor VARCHAR(100), etiquetas_id ARRAY, comentarios_id ARRAY,"+
-                                "foreign key (autor) references Usuario(username));";
+        String queryArticulo = "CREATE TABLE IF NOT EXISTS Articulo(" +
+                "id BIGINT PRIMARY KEY auto_increment, " +
+                "titulo VARCHAR(200),"+
+                "cuerpo VARCHAR, " +
+                "autor VARCHAR(100), " +
+                "fecha DATE, " +
+                "etiquetas_id ARRAY, " +
+                "comentarios_id ARRAY,"+
+                "foreign key (autor) references Usuario(username));";
 
-        String queryUsuario = "CREATE TABLE IF NOT EXISTS Usuario(username VARCHAR(100) PRIMARY KEY NOT NULL,"+
-                " contrasena VARCHAR(255), administrador BOOLEAN, autor BOOLEAN)";
+        String queryUsuario = "CREATE TABLE IF NOT EXISTS Usuario(" +
+                "username VARCHAR(100) PRIMARY KEY NOT NULL,"+
+                "contrasena VARCHAR(255), " +
+                "administrador BOOLEAN, " +
+                "autor BOOLEAN)";
 
-        String queryComentario = "CREATE TABLE IF NOT EXISTS Comentario(comentario_id BIGINT PRIMARY KEY auto_increment, comentario VARCHAR, autor VARCHAR(100), " +
-                                "articulo_id BIGINT," +
-                                "FOREIGN KEY (autor) REFERENCES Usuario(username), FOREIGN KEY (articulo_id) REFERENCES Articulo(articulo_id));";
+        String queryComentario = "CREATE TABLE IF NOT EXISTS Comentario(" +
+                "id BIGINT PRIMARY KEY auto_increment, " +
+                "comentario VARCHAR, " +
+                "autor VARCHAR(100), " +
+                "articulo BIGINT," +
+                "FOREIGN KEY (autor) REFERENCES Usuario(username), " +
+                "FOREIGN KEY (articulo) REFERENCES Articulo(id));";
 
-        String queryEtiqueta = "CREATE TABLE IF NOT EXISTS Etiqueta(etiqueta_id BIGINT PRIMARY KEY auto_increment, etiqueta VARCHAR(80))";
+        String queryEtiqueta = "CREATE TABLE IF NOT EXISTS Etiqueta(" +
+                "id BIGINT PRIMARY KEY auto_increment, " +
+                "etiqueta VARCHAR(80))";
 
         try(Connection conexion = sql2o.open()){
             conexion.createQuery(queryUsuario).executeUpdate();
@@ -83,7 +98,7 @@ public class Dao {
         }
     }
     public List<Articulo> getArticulos(){
-        String sql = "select * from Articulo";
+        String sql = "select * from articulo";
         try(Connection conexion = sql2o.open()){
             return conexion.createQuery(sql).executeAndFetch(Articulo.class);
         }
