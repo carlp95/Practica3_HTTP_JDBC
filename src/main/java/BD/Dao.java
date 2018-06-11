@@ -13,28 +13,37 @@ public class Dao {
 
     private Sql2o sql2o;
 
+    private static Dao instance = null;
+
     public Dao(){
         this.sql2o = new Sql2o("jdbc:h2:tcp://localhost/~/practica3","sa","");
         crearTablas();
         cargarUsuarioAdm();
     }
 
+    public static Dao getInstance() {
+        if ( instance == null) {
+            instance = new Dao();
+        }
+
+        return instance;
+    }
+
     private void crearTablas(){
+        String queryUsuario = "CREATE TABLE IF NOT EXISTS Usuario(" +
+                "username VARCHAR(100) PRIMARY KEY NOT NULL,"+
+                "contrasena VARCHAR(255), " +
+                "administrador BOOLEAN, " +
+                "autor BOOLEAN)";
+
         String queryArticulo = "CREATE TABLE IF NOT EXISTS Articulo(" +
                 "id BIGINT PRIMARY KEY auto_increment, " +
                 "titulo VARCHAR(200),"+
                 "cuerpo VARCHAR, " +
                 "autor VARCHAR(100), " +
                 "fecha DATE, " +
-                "etiquetas_id ARRAY, " +
-                "comentarios_id ARRAY,"+
                 "foreign key (autor) references Usuario(username));";
 
-        String queryUsuario = "CREATE TABLE IF NOT EXISTS Usuario(" +
-                "username VARCHAR(100) PRIMARY KEY NOT NULL,"+
-                "contrasena VARCHAR(255), " +
-                "administrador BOOLEAN, " +
-                "autor BOOLEAN)";
 
         String queryComentario = "CREATE TABLE IF NOT EXISTS Comentario(" +
                 "id BIGINT PRIMARY KEY auto_increment, " +
@@ -46,24 +55,30 @@ public class Dao {
 
         String queryEtiqueta = "CREATE TABLE IF NOT EXISTS Etiqueta(" +
                 "id BIGINT PRIMARY KEY auto_increment, " +
-                "etiqueta VARCHAR(80))";
+                "etiqueta VARCHAR(80)," +
+                "articulo BIGINT," +
+                "FOREIGN KEY (articulo) REFERENCES Articulo(id));";
 
+
+        //Ejecucion de los Querys:
+
+        //Usuario
         try(Connection conexion = sql2o.open()){
             conexion.createQuery(queryUsuario).executeUpdate();
         }
-
+        //Articulo
+        try(Connection conexion = sql2o.open()){
+            conexion.createQuery(queryArticulo).executeUpdate();
+        }
+        //Comentario
+        try(Connection conexion = sql2o.open()){
+            conexion.createQuery(queryComentario).executeUpdate();
+        }
+        //Etiqueta
         try(Connection conexion = sql2o.open()){
             conexion.createQuery(queryEtiqueta).executeUpdate();
         }
 
-
-        try(Connection conexion = sql2o.open()){
-            conexion.createQuery(queryArticulo).executeUpdate();
-        }
-
-        try(Connection conexion = sql2o.open()){
-            conexion.createQuery(queryComentario).executeUpdate();
-        }
 
     }
 
@@ -91,22 +106,28 @@ public class Dao {
         }
     }
 
-    public List<Comentario> getComentarios(){
-        String sql = "select * from Comentario";
+    public List<Comentario> getComentarios(Articulo articulo){
+        String sql = "select * from Comentario WHERE id = :articulo_id";
         try(Connection conexion = sql2o.open()){
-            return conexion.createQuery(sql).executeAndFetch(Comentario.class);
+            return conexion.createQuery(sql)
+                    .addParameter("articulo_id", articulo.getId())
+                    .executeAndFetch(Comentario.class);
         }
     }
+
     public List<Articulo> getArticulos(){
-        String sql = "select * from articulo";
+        String sql = "select * from Articulo";
         try(Connection conexion = sql2o.open()){
             return conexion.createQuery(sql).executeAndFetch(Articulo.class);
         }
     }
-    public List<Etiqueta> getEtiqueta(){
-        String sql = "select * from Etiqueta";
+
+    public List<Etiqueta> getEtiqueta(Articulo articulo){
+        String sql = "select * from Etiqueta where id = :articulo_id";
         try(Connection conexion = sql2o.open()){
-            return conexion.createQuery(sql).executeAndFetch(Etiqueta.class);
+            return conexion.createQuery(sql)
+                    .addParameter("articulo_id", articulo.getId())
+                    .executeAndFetch(Etiqueta.class);
         }
     }
 

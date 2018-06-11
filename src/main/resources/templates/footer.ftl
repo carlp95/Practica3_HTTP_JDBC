@@ -1,1 +1,2 @@
-<p align="center">Todos mis derechos reservados  ©Copyright 2018</p>
+<p align="center">©Copyright 2018 Estudiantes</p>
+

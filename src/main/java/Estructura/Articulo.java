@@ -1,5 +1,7 @@
 package Estructura;
 
+import BD.Dao;
+
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +70,8 @@ public class Articulo {
     }
 
     public void setListaEtiquetas(List<Etiqueta> listaEtiquetas) {
-        this.listaEtiquetas = listaEtiquetas;
+        System.out.println("Llego aqui");
+        this.listaEtiquetas = Dao.getInstance().getEtiqueta(this);
     }
 
     public List<Comentario> getListaComentarios() {
@@ -76,6 +79,6 @@ public class Articulo {
     }
 
     public void setListaComentarios(List<Comentario> listaComentarios) {
-        this.listaComentarios = listaComentarios;
+        this.listaComentarios = Dao.getInstance().getComentarios(this);
     }
 }
