@@ -7,9 +7,7 @@ public class Usuario {
     private boolean administrador;
     private boolean autor;
 
-
-    public Usuario() {
-    }
+    public Usuario() { }
 
     public Usuario(String username, String contrasena, boolean administrador, boolean autor) {
         this.username = username;

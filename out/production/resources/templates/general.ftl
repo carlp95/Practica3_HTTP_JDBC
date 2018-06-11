@@ -15,7 +15,7 @@
     <#nested >
 
     <#--footer-->
-<footer class="blog-footer">
+<footer class="footer">
     <#include "footer.ftl">
 </footer>
 </body>

@@ -11,7 +11,11 @@
                         ${ articulo.cuerpo }
                     </div>
                     <div class="card-footer">
-                        span
+                        <#list articulo.listaEtiquetas as e>
+                            <span class="badge badge-primary">${ e.etiqueta }</span>
+                        <#else>
+                            <span class="badge badge-secondary">No one TT</span>
+                        </#list>
                     </div>
                 </div>
             </#items>

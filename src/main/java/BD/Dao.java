@@ -1,9 +1,6 @@
 package BD;
 
-import Estructura.Articulo;
-import Estructura.Comentario;
-import Estructura.Etiqueta;
-import Estructura.Usuario;
+import Estructura.*;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
@@ -103,6 +100,15 @@ public class Dao {
         String sql = "select * from Usuario";
         try(Connection conexion = sql2o.open()){
             return conexion.createQuery(sql).executeAndFetch(Usuario.class);
+        }
+    }
+
+    public Usuario getUsuariosPorUsername(String username){
+        String sql = "select * from Usuario where username = :user";
+        try(Connection conexion = sql2o.open()){
+            return conexion.createQuery(sql)
+                    .addParameter("user", username)
+                    .executeAndFetch(Usuario.class).get(0);
         }
     }
 
