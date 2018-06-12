@@ -76,6 +76,6 @@ public class Articulo {
     }
 
     public void setListaComentarios(List<Comentario> listaComentarios) {
-        this.listaComentarios = Dao.getInstance().getComentarios(this);
+        //this.listaComentarios = Dao.getInstance().getComentarios(this);
     }
 }

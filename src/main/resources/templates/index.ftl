@@ -1,6 +1,6 @@
 <#import "general.ftl" as gen>
 
-<@gen.base>
+<@gen.base usuario = usuarioValue>
 
     <#list articulos>
         <ul>

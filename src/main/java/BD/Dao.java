@@ -112,11 +112,20 @@ public class Dao {
         }
     }
 
-    public List<Comentario> getComentarios(Articulo articulo){
-        String sql = "select * from Comentario WHERE id = :articulo_id";
+    public Articulo getArticulosPorId(Long id){
+        String sql = "select * from Articulo where id = :articulo_id";
         try(Connection conexion = sql2o.open()){
             return conexion.createQuery(sql)
-                    .addParameter("articulo_id", articulo.getId())
+                    .addParameter("articulo_id", id)
+                    .executeAndFetch(Articulo.class).get(0);
+        }
+    }
+
+    public List<Comentario> getComentarios(Long articulo){
+        String sql = "select * from Comentario WHERE articulo = :articulo_id";
+        try(Connection conexion = sql2o.open()){
+            return conexion.createQuery(sql)
+                    .addParameter("articulo_id", articulo)
                     .executeAndFetch(Comentario.class);
         }
     }

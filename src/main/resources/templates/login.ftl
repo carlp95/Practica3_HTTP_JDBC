@@ -1,6 +1,6 @@
 <#import "general.ftl" as gen>
 
-<@gen.base>
+<@gen.base usuario="vacio" >
 <div class="container" align="center">
     <div class="col-lg-5">
     <div class="card">
