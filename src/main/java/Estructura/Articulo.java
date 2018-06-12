@@ -68,7 +68,8 @@ public class Articulo {
     }
 
     public void setListaEtiquetas(List<Etiqueta> listaEtiquetas) {
-        this.listaEtiquetas = Dao.getInstance().getEtiqueta(this);
+        this.listaEtiquetas = listaEtiquetas;
+//            this.listaEtiquetas = Dao.getInstance().getEtiquetas(this.getId());
     }
 
     public List<Comentario> getListaComentarios() {

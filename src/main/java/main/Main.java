@@ -3,19 +3,18 @@ package main;
 import BD.Dao;
 import Estructura.Articulo;
 import Estructura.Comentario;
+import Estructura.Etiqueta;
 import Estructura.Usuario;
 import freemarker.template.Configuration;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.sql2o.Sql2oException;
 import spark.ModelAndView;
 import spark.Session;
 import spark.template.freemarker.FreeMarkerEngine;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static spark.Spark.*;
 
@@ -25,13 +24,22 @@ public class Main {
         configuration.setClassForTemplateLoading(Main.class, "/templates");
         FreeMarkerEngine freemarkerEngine = new FreeMarkerEngine(configuration);
 
-        Dao conexionBD = new Dao();
-
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
+            List<Articulo> listaArticulos = Dao.getInstance().getArticulos();
+
+            for (Articulo articulo : listaArticulos) {
+                try {
+                    articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
+                } catch (Sql2oException e) {
+                    System.out.println("Ocurrio un error " + e.getMessage());
+                }
+            }
+
             model.put("titulo", "Banana Blog");
-            model.put("articulos", conexionBD.getArticulos());
             model.put("usuarioValue", request.session().attribute("usuarioValue"));
+            model.put("articulos", listaArticulos);
+
             return new ModelAndView(model, "index.ftl");
         }, freemarkerEngine);
 
@@ -50,7 +58,7 @@ public class Main {
             if(request.queryParams("recordar") == null) {
 
                 //Session session = request.session(true);
-                List<Usuario> usuarios = conexionBD.getUsuarios();
+                List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
                 for(Usuario user : usuarios){
                     boolean verificacion = encryptor.checkPassword(contrasena, user.getContrasena());
@@ -63,7 +71,7 @@ public class Main {
                 }
                 response.redirect("/");
             }else if(request.queryParams("recordar").equals("on")){
-                    List<Usuario> usuarios = conexionBD.getUsuarios();
+                    List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
                     if(request.cookie("Sesion") == null){
                         for(Usuario user : usuarios){
@@ -79,7 +87,7 @@ public class Main {
                         }
                         response.redirect("/");
                     }else {
-                        request.session().attribute("usuario",conexionBD.getUsuariosPorUsername(usuario));
+                        request.session().attribute("usuario",Dao.getInstance().getUsuariosPorUsername(usuario));
                     }
 
                 }
@@ -88,13 +96,13 @@ public class Main {
 
         get("/show/:id",(request, response) ->{
             Map<String, Object> atributos = new HashMap<>();
-            List<Articulo> articulos = conexionBD.getArticulos();
             atributos.put("usuarioValue", request.session().attribute("usuarioValue"));
+            List<Articulo> articulos = Dao.getInstance().getArticulos();
             for(Articulo art : articulos){
                 if(Long.parseLong(request.params("id")) == art.getId()){
                     atributos.put("titulo",art.getTitulo());
                     atributos.put("articulo",art);
-                    for(Comentario com : conexionBD.getComentarios(art.getId())){
+                    for(Comentario com : Dao.getInstance().getComentarios(art.getId())){
                         atributos.put("comentarios",com);
                     }
                 }
@@ -110,19 +118,20 @@ public class Main {
                 response.redirect("/login");
             }else {
 
-                for(Articulo art : conexionBD.getArticulos()){
+                for(Articulo art : Dao.getInstance().getArticulos()){
                     if(Long.parseLong(request.queryParams("id")) == art.getId()){
                         comentario.setComentario(request.queryParams("comentario"));
                         comentario.setAutor(request.session().attribute("usuarioValue"));
                         comentario.setArticulo(art.getId());
-                        conexionBD.insertarComentario(comentario);
+                        Dao.getInstance().insertarComentario(comentario);
                         response.redirect("/show/:" + art.getId());
                     }
+
                 }
             }
 
             return null;
-        },freemarkerEngine);
+        }, freemarkerEngine);
 
         get("/createUser", (request,response) ->{
             Map<String, Object> atributos = new HashMap<>();
@@ -144,7 +153,7 @@ public class Main {
                 user.setAutor(true);
                 user.setAdministrador(false);
             }
-            conexionBD.insertarUsuario(user);
+            Dao.getInstance().insertarUsuario(user);
             response.redirect("/");
             return null;
 
