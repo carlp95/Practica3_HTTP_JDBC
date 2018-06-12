@@ -27,19 +27,21 @@ public class Main {
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             List<Articulo> listaArticulos = Dao.getInstance().getArticulos();
-
-            for (Articulo articulo : listaArticulos) {
-                try {
-                    articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
-                } catch (Sql2oException e) {
-                    System.out.println("Ocurrio un error " + e.getMessage());
+            if(request.session().attribute("usuarioValue") == null){
+                response.redirect("/login");
+            }else {
+                for (Articulo articulo : listaArticulos) {
+                    try {
+                        articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
+                    } catch (Sql2oException e) {
+                        System.out.println("Ocurrio un error " + e.getMessage());
+                    }
                 }
+
+                model.put("titulo", "Banana Blog");
+                model.put("usuarioValue", request.session().attribute("usuarioValue"));
+                model.put("articulos", listaArticulos);
             }
-
-            model.put("titulo", "Banana Blog");
-            model.put("usuarioValue", request.session().attribute("usuarioValue"));
-            model.put("articulos", listaArticulos);
-
             return new ModelAndView(model, "index.ftl");
         }, freemarkerEngine);
 
