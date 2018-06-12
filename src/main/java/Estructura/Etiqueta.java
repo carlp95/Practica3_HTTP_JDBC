@@ -9,8 +9,7 @@ public class Etiqueta {
     public Etiqueta() {
     }
 
-    public Etiqueta(long id, String etiqueta, long articulo) {
-        this.id = id;
+    public Etiqueta(String etiqueta, long articulo) {
         this.etiqueta = etiqueta;
         this.articulo = articulo;
     }

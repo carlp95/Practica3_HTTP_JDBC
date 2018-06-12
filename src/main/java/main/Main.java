@@ -13,6 +13,9 @@ import spark.ModelAndView;
 import spark.Session;
 import spark.template.freemarker.FreeMarkerEngine;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static spark.Spark.*;
@@ -137,5 +140,36 @@ public class Main {
             return null;
 
         }, freemarkerEngine);
+
+        get("/createArticle", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("titulo", "Crear Articulo");
+            return new ModelAndView(model, "createArticle.ftl");
+        }, freemarkerEngine);
+
+        post("/createArticle", (request, response) -> {
+
+            Articulo articulo = new Articulo();
+
+            articulo.setTitulo(
+                  request.queryParams("titulo"));
+
+            articulo.setCuerpo(
+                  request.queryParams("cuerpo"));
+
+            articulo.setAutor("admin");
+
+            articulo.setFecha(new Date());
+
+            //TODO nd - Cuando las sesiones funcionen colocar la implementacion adecuada
+            articulo.setListaEtiquetas(
+                    request.queryParams("etiquetas").split(","));
+
+            Dao.getInstance().insertarArticulo(articulo);
+
+            response.redirect("/");
+            return null;
+        });
+
     }
 }

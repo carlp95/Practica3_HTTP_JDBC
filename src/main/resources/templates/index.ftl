@@ -7,7 +7,7 @@
             <#items as articulo>
                 <div class="card mx-auto mb-3" style="width: 750px">
                     <div class="card-body">
-                        <h2>${ articulo.titulo }</h2>
+                        <a href="/show/${ articulo.id }"><h2>${ articulo.titulo }</h2></a>
                         <p>${ articulo.cuerpo }</p>
                     </div>
                     <div class="card-footer">
