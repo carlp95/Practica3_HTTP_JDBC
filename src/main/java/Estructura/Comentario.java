@@ -1,5 +1,7 @@
 package Estructura;
 
+import BD.Dao;
+
 public class Comentario {
 
     private long id;
@@ -37,15 +39,15 @@ public class Comentario {
         return autor;
     }
 
-    public void setAutor(Usuario autor) {
-        this.autor = autor;
+    public void setAutor(String autor) {
+        this.autor = Dao.getInstance().getUsuariosPorUsername(autor);
     }
 
     public Articulo getArticulo() {
         return articulo;
     }
 
-    public void setArticulo(Articulo articulo) {
-        this.articulo = articulo;
+    public void setArticulo(Long articulo) {
+        this.articulo = Dao.getInstance().getArticulosPorId(articulo);
     }
 }
