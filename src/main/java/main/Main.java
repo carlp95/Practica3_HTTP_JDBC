@@ -27,9 +27,10 @@ public class Main {
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             List<Articulo> listaArticulos = Dao.getInstance().getArticulos();
-            if(request.session().attribute("usuarioValue") == null){
+
+            if (request.session().attribute("usuarioValue") == null){
                 response.redirect("/login");
-            }else {
+            } else {
                 for (Articulo articulo : listaArticulos) {
                     try {
                         articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
@@ -83,6 +84,7 @@ public class Main {
                     halt(401,"Credenciales invalidas...");
                 }
                 response.redirect("/");
+
             }else if(request.queryParams("recordar").equals("on")){
                     List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
@@ -175,5 +177,38 @@ public class Main {
             return null;
 
         }, freemarkerEngine);
+
+        get("/createArticle", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("titulo", "Crear Articulo");
+            model.put("usuarioValue", request.session().attribute("usuarioValue"));
+            return new ModelAndView(model, "createArticle.ftl");
+        }, freemarkerEngine);
+
+        post("/createArticle", (request, response) -> {
+
+            Articulo articulo = new Articulo();
+
+            articulo.setTitulo(
+                  request.queryParams("titulo"));
+
+            articulo.setCuerpo(
+                  request.queryParams("cuerpo"));
+
+            articulo.setAutor((( Usuario ) request.session().attribute("usuarioValue")).getUsername());
+
+            articulo.setFecha(new Date());
+
+            articulo.setListaEtiquetas(
+                    request.queryParams("etiquetas").split(","));
+
+            Dao.getInstance().insertarArticulo(articulo);
+
+
+
+            response.redirect("/");
+            return null;
+        });
+
     }
 }

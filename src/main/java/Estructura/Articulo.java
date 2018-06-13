@@ -2,6 +2,7 @@ package Estructura;
 
 import BD.Dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +16,9 @@ public class Articulo {
     private List<Etiqueta> listaEtiquetas;
     private List<Comentario> listaComentarios;
 
-    public Articulo(long id, String titulo, String cuerpo, Usuario autor, Date fecha) {
-        this.id = id;
+    public Articulo() {}
+
+    public Articulo(String titulo, String cuerpo, Usuario autor, Date fecha) {
         this.titulo = titulo;
         this.cuerpo = cuerpo;
         this.autor = autor;
@@ -67,9 +69,15 @@ public class Articulo {
         return listaEtiquetas;
     }
 
-    public void setListaEtiquetas(List<Etiqueta> listaEtiquetas) {
-        this.listaEtiquetas = listaEtiquetas;
-//            this.listaEtiquetas = Dao.getInstance().getEtiquetas(this.getId());
+    public void setListaEtiquetas(List<Etiqueta> etiquetas) {
+        this.listaEtiquetas = etiquetas;
+    }
+
+    public void setListaEtiquetas(String[] etiquetas) {
+        this.listaEtiquetas = new ArrayList<>();
+        for (String etiqueta : etiquetas) {
+            this.listaEtiquetas.add(new Etiqueta(etiqueta, this.getId()));
+        }
     }
 
     public List<Comentario> getListaComentarios() {
