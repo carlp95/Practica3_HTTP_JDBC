@@ -27,7 +27,7 @@
                     </li>
                 </ul>
             </div>
-            <a href="/login"><button class="btn btn-secundary">Hey, ${usuario.username}!</button></a>
+            <a href="/logout"><button class="btn btn-secundary">${usuario.username}!, Cerrar Sesión</button></a>
         <#else >
             <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav mr-auto">

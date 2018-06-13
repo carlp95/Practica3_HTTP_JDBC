@@ -11,7 +11,7 @@
                         <div class="form-group row">
                             <div class="col-md-6" style="margin: 0 auto;">
                                 <label for="username">Usuario</label>
-                                <input class="form-control" name="username" placeholder="usuario123" type="text">
+                                <input class="form-control" name="username" type="text">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -23,11 +23,11 @@
                         <div class="form-group row">
                             <div class="form-check col-md-4" style="margin: 0 auto;">
                                 <label class="form-check-label">
-                                    <input class="form-check-input" name="administrador" type="checkbox">
+                                    <input class="form-check-input" name="administrador" type="radio">
                                     Administrador
                                 </label>
                                 <label class="form-check-label">
-                                    <input class="form-check-input" name="autor" type="checkbox">
+                                    <input class="form-check-input" name="autor" type="radio">
                                     Autor
                                 </label>
                             </div>

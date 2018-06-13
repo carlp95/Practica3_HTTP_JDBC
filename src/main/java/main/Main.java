@@ -56,43 +56,58 @@ public class Main {
             String usuario = request.queryParams("username");
             String contrasena = request.queryParams("contrasena");
             BasicPasswordEncryptor encryptor = new BasicPasswordEncryptor();
+            Map<String, String> cookies = request.cookies();
+
+            for(String key : cookies.keySet()){
+                if(key.equalsIgnoreCase("Sesion")){
+                    String encryptedText = request.cookie("Sesion");
+                    BasicTextEncryptor encriptador = new BasicTextEncryptor();
+                    encriptador.setPassword("secretPasswd");
+                    String usern = encriptador.decrypt(encryptedText);
+                    if( usuario.equalsIgnoreCase(usern)){
+                        request.session().attribute("usuarioValue", Dao.getInstance().getUsuariosPorUsername(usern));
+                        response.redirect("/");
+                    }else {
+                        break;
+                    }
+
+                }
+            }
 
             if(request.queryParams("recordar") == null) {
 
-                //Session session = request.session(true);
-                List<Usuario> usuarios = Dao.getInstance().getUsuarios();
-
-                for(Usuario user : usuarios){
-                    boolean verificacion = encryptor.checkPassword(contrasena, user.getContrasena());
-                    if(request.queryParams("username").equalsIgnoreCase(user.getUsername()) && verificacion){
-                        //session.attribute("usuario", user);
-                        request.session().attribute("usuarioValue",user);
-                    }else{
-                        halt(401,"Credenciales invalidas...");
-                    }
+                boolean verificacion = encryptor.checkPassword(contrasena, Dao.getInstance().getUsuariosPorUsername(request.queryParams("username")).getContrasena());
+                if(verificacion){
+                    request.session(true).attribute("usuarioValue",Dao.getInstance().getUsuariosPorUsername(request.queryParams("username")));
+                }else {
+                    halt(401,"Credenciales invalidas...");
                 }
                 response.redirect("/");
             }else if(request.queryParams("recordar").equals("on")){
                     List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
-                    if(request.cookie("Sesion") == null){
                         for(Usuario user : usuarios){
                             boolean verificacion = encryptor.checkPassword(contrasena, user.getContrasena());
                             if(request.queryParams("username").equalsIgnoreCase(user.getUsername()) && verificacion){
                                 BasicTextEncryptor encriptadorTexto = new BasicTextEncryptor();
-                                response.cookie("/","Sesion", encriptadorTexto.encrypt("Username: "+
-                                            request.queryParams("username") + " Contrasena: " + contrasena  ), 604800, true);
-                                request.session().attribute("usuarioValue", user);
+                                encriptadorTexto.setPassword("secretPasswd");
+                                response.cookie("/","Sesion", encriptadorTexto.encrypt(user.getUsername()), 604800, false);
+                                request.session(true).attribute("usuarioValue", user);
                             }else{
                                 halt(401,"Credenciales invalidas...");
                             }
                         }
                         response.redirect("/");
-                    }else {
-                        request.session().attribute("usuario",Dao.getInstance().getUsuariosPorUsername(usuario));
-                    }
 
                 }
+            return null;
+        },freemarkerEngine);
+
+        get("/logout",(request,response) ->{
+            Session sesionActiva = request.session();
+            sesionActiva.invalidate();
+            response.redirect("/");
+
             return null;
         },freemarkerEngine);
 
@@ -148,7 +163,7 @@ public class Main {
             String passEncripted = encriptor.encryptPassword(request.queryParams("contrasena"));
             user.setUsername(request.queryParams("username"));
             user.setContrasena(passEncripted);
-            if(request.queryParams("administrador").equals("on")){
+            if(request.queryParams("administrador") != null){
                 user.setAdministrador(true);
                 user.setAutor(true);
             }else if(request.queryParams("autor").equals("on")){
