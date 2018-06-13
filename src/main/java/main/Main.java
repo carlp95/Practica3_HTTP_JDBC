@@ -30,9 +30,10 @@ public class Main {
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             List<Articulo> listaArticulos = Dao.getInstance().getArticulos();
-            if(request.session().attribute("usuarioValue") == null){
+
+            if (request.session().attribute("usuarioValue") == null){
                 response.redirect("/login");
-            }else {
+            } else {
                 for (Articulo articulo : listaArticulos) {
                     try {
                         articulo.setListaEtiquetas(Dao.getInstance().getEtiquetas(articulo.getId()));
@@ -75,6 +76,7 @@ public class Main {
                     }
                 }
                 response.redirect("/");
+
             }else if(request.queryParams("recordar").equals("on")){
                     List<Usuario> usuarios = Dao.getInstance().getUsuarios();
 
@@ -148,9 +150,12 @@ public class Main {
         post("/createUser", (request, response) ->{
             Usuario user = new Usuario();
             BasicPasswordEncryptor encriptor = new BasicPasswordEncryptor();
+
             String passEncripted = encriptor.encryptPassword(request.queryParams("contrasena"));
+
             user.setUsername(request.queryParams("username"));
             user.setContrasena(passEncripted);
+
             if(request.queryParams("administrador").equals("on")){
                 user.setAdministrador(true);
                 user.setAutor(true);
@@ -167,6 +172,7 @@ public class Main {
         get("/createArticle", (request, response) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("titulo", "Crear Articulo");
+            model.put("usuarioValue", request.session().attribute("usuarioValue"));
             return new ModelAndView(model, "createArticle.ftl");
         }, freemarkerEngine);
 
@@ -180,15 +186,16 @@ public class Main {
             articulo.setCuerpo(
                   request.queryParams("cuerpo"));
 
-            articulo.setAutor("admin");
+            articulo.setAutor((( Usuario ) request.session().attribute("usuarioValue")).getUsername());
 
             articulo.setFecha(new Date());
 
-            //TODO nd - Cuando las sesiones funcionen colocar la implementacion adecuada
             articulo.setListaEtiquetas(
                     request.queryParams("etiquetas").split(","));
 
             Dao.getInstance().insertarArticulo(articulo);
+
+
 
             response.redirect("/");
             return null;

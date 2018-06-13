@@ -1,6 +1,6 @@
 <#import "general.ftl" as gen>
 
-<@gen.base>
+<@gen.base usuario=usuarioValue>
 
     <div class="card mx-auto" style="width: 750px">
         <div class="card-header">

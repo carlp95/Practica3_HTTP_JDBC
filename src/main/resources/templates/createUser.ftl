@@ -1,6 +1,6 @@
 <#import "general.ftl" as gen>
 
-<@gen.base usuario= usuarioValue>
+<@gen.base usuario=usuarioValue>
 <#if usuarioValue.administrador>
     <div class="container" align="center">
         <div class="col-lg-5">

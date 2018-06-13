@@ -119,7 +119,7 @@ public class Dao {
         try(Connection conexion = sql2o.open()){
             return conexion.createQuery(sql)
                     .addParameter("articulo_id", id)
-                    .executeAndFetch(Articulo.class).get(0);
+                    .executeAndFetchFirst(Articulo.class);
         }
     }
 
@@ -181,13 +181,15 @@ public class Dao {
     public void insertarArticulo(Articulo articulo){
         String sql = "insert into Articulo(titulo,cuerpo,fecha,autor) values(:titulo,:cuerpo,:fecha,:autor)";
         try(Connection conexion = sql2o.open()){
-            conexion.createQuery(sql)
+            long id = (long) conexion.createQuery(sql)
                     .addParameter("titulo",articulo.getTitulo())
                     .addParameter("cuerpo",articulo.getCuerpo())
                     .addParameter("fecha",articulo.getFecha())
                     .addParameter("autor",articulo.getAutor().getUsername())
-                    .executeUpdate();
+                    .executeUpdate().getKey();
+            articulo.setId(id);
         }
+
         String sql2 = "insert into Etiqueta(etiqueta, articulo) values(:etiqueta, :articulo)";
         try(Connection conexion = sql2o.open()) {
             for (Etiqueta etiqueta : articulo.getListaEtiquetas()) {
@@ -198,6 +200,7 @@ public class Dao {
             }
         }
     }
+
     public void insertarUsuario(Usuario usuario){
 
         String sql = "insert into Usuario(username,contrasena,administrador,autor) values(:username,:contrasena,:administrador,:autor)";

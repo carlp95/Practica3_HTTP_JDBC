@@ -78,7 +78,6 @@ public class Articulo {
         for (String etiqueta : etiquetas) {
             this.listaEtiquetas.add(new Etiqueta(etiqueta, this.getId()));
         }
-//            this.listaEtiquetas = Dao.getInstance().getEtiquetas(this.getId());
     }
 
     public List<Comentario> getListaComentarios() {
