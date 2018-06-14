@@ -23,11 +23,11 @@
                         <div class="form-group row">
                             <div class="form-check col-md-4" style="margin: 0 auto;">
                                 <label class="form-check-label">
-                                    <input class="form-check-input" name="administrador" type="radio">
+                                    <input class="form-check-input" name="rol" value="administrador" type="radio">
                                     Administrador
                                 </label>
                                 <label class="form-check-label">
-                                    <input class="form-check-input" name="autor" type="radio">
+                                    <input class="form-check-input" name="rol" value="autor" type="radio">
                                     Autor
                                 </label>
                             </div>

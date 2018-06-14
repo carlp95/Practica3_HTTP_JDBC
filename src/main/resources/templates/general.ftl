@@ -19,12 +19,19 @@
         <#if usuario != "vacio">
             <div class="collapse navbar-collapse" id="navbarColor02">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/createUser">Crear Usuario <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/createArticle">Crear Artículo</a>
-                    </li>
+                    <#if usuario.administrador>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/createUser">Crear Usuario <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/createArticle">Crear Artículo</a>
+                        </li>
+                        <#else >
+                            <li class="nav-item">
+                                <a class="nav-link" href="/createArticle">Crear Artículo</a>
+                            </li>
+                    </#if>
+
                 </ul>
             </div>
             <a href="/logout"><button class="btn btn-secundary">${usuario.username}!, Cerrar Sesión</button></a>

@@ -1,6 +1,6 @@
 <#import "general.ftl" as gen>
 
-<@gen.base usuario=usuarioValue>
+<@gen.base usuario = usuarioValue>
 <div class="container" >
     <div class="card mb-3" align="center">
         <h3 class="card-header">${articulo.titulo}</h3>
@@ -10,9 +10,13 @@
         </div>
 
         <div class="card-body"> Etiquetas:
-            <#--<#list articulo.listaEtiquetas as etiquetas>
-                <a href="#" class="card-link">${etiquetas.etiqueta}</a>
-            </#list>-->
+            <#if etiquetas?size == 0>
+                <p class="text-danger">No hay etiquetas relacionada a este Artículo</p>
+            <#else >
+                <#list etiquetas as e>
+                    <span class="badge badge-primary">${ e.etiqueta }</span>
+                </#list>
+            </#if>
         </div>
         <div class="card-footer text-muted">
             Autor: ${articulo.autor.username} - ${articulo.fecha}
@@ -23,7 +27,7 @@
             <div class="card-body">
                 <h4 class="card-title">Comentarios</h4>
                 <h6 class="card-subtitle mb-2 text-muted">Comenta este Post</h6>
-                <form action="/createComment" method="post">
+                <form action="createComment/${articulo.id}" method="post">
                     <div class="form-group">
                         <textarea class="form-control" name="comentario" rows="6" placeholder="Escribe tu comentario aquí"></textarea>
                     </div>
@@ -31,20 +35,30 @@
                 </form>
             </div>
         </div>
-    <div class="card">
-        <div class="-body">
-            <h4 class="card-title">Comentarios sobre este Post</h4>
-            <div class="row">
-                <div class="col-xl-5">
-                    <p><strong>${comentarios.autor.username}:</strong> ${comentarios.comentario}</p>
-                </div>
-                <div class="col-xl-5">
-                    <form action="/deleteComment" method="post">
-                        <button type="submit" class="btn btn-danger"><i class="fa fa-trash"> <strong>Eliminar</strong></i></button>
-                    </form>
+    <#if comentarios?size == 0>
+        <div class="card">
+            <div class="-body">
+                <h4 class="card-title">Comentarios sobre este Post</h4>
+                <div class="row">
+                    <div class="col-xl-5">
+                        <p class="text-danger">No hay comentarios para este Artículo :(</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <#else >
+        <div class="card">
+            <div class="-body">
+                    <div class="col-xl-5">
+                        <h4 class="card-title">Comentarios sobre este Post</h4>
+                        <#list comentarios?reverse as com>
+                            <p><strong>${com.autor.username}:</strong> ${com.comentario}</p>
+                        </#list>
+
+                    </div>
+            </div>
+        </div>
+    </#if>
+
 </div>
 </@gen.base>

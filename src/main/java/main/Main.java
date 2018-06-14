@@ -121,33 +121,31 @@ public class Main {
                 if(Long.parseLong(request.params("id")) == art.getId()){
                     atributos.put("titulo",art.getTitulo());
                     atributos.put("articulo",art);
-                    for(Comentario com : Dao.getInstance().getComentarios(art.getId())){
-                        atributos.put("comentarios",com);
-                    }
+
+                        atributos.put("comentarios",Dao.getInstance().getComentarios(art.getId()));
+
+                        atributos.put("etiquetas",Dao.getInstance().getEtiquetas(art.getId()));
+
                 }
             }
 
             return new ModelAndView(atributos,"showArticle.ftl");
         },freemarkerEngine);
 
-        post("/createComment",(request,response)->{
+        post("show/createComment/:id",(request,response)->{
             Comentario comentario = new Comentario();
 
             if(request.session().attribute("usuarioValue") == null){
                 response.redirect("/login");
             }else {
 
-                for(Articulo art : Dao.getInstance().getArticulos()){
-                    if(Long.parseLong(request.queryParams("id")) == art.getId()){
-                        comentario.setComentario(request.queryParams("comentario"));
-                        comentario.setAutor(request.session().attribute("usuarioValue"));
-                        comentario.setArticulo(art.getId());
-                        Dao.getInstance().insertarComentario(comentario);
-                        response.redirect("/show/:" + art.getId());
-                    }
+                comentario.setComentario(request.queryParams("comentario"));
+                comentario.setAutor(((Usuario)request.session().attribute("usuarioValue")).getUsername());
+                comentario.setArticulo(Long.parseLong(request.params("id")));
+                Dao.getInstance().insertarComentario(comentario);
+                response.redirect("/show/" + request.params("id"));
 
                 }
-            }
 
             return null;
         }, freemarkerEngine);
@@ -165,10 +163,10 @@ public class Main {
             String passEncripted = encriptor.encryptPassword(request.queryParams("contrasena"));
             user.setUsername(request.queryParams("username"));
             user.setContrasena(passEncripted);
-            if(request.queryParams("administrador") != null){
+            if(request.queryParams("rol").equals("administrador")){
                 user.setAdministrador(true);
                 user.setAutor(true);
-            }else if(request.queryParams("autor").equals("on")){
+            }else if(request.queryParams("rol").equals("autor")){
                 user.setAutor(true);
                 user.setAdministrador(false);
             }
@@ -182,6 +180,9 @@ public class Main {
             Map<String, Object> model = new HashMap<>();
             model.put("titulo", "Crear Articulo");
             model.put("usuarioValue", request.session().attribute("usuarioValue"));
+            if(request.session().attribute("usuarioValue") == null){
+                response.redirect("/login");
+            }
             return new ModelAndView(model, "createArticle.ftl");
         }, freemarkerEngine);
 
