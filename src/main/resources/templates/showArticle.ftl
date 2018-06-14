@@ -2,25 +2,33 @@
 
 <@gen.base usuario = usuarioValue>
 <div class="container" >
-    <div class="card mb-3" align="center">
-        <h3 class="card-header">${articulo.titulo}</h3>
-        <div class="card-body">
-        <div class="card-body">
-            <p class="card-text" style="text-align: justify">${articulo.cuerpo}</p>
-        </div>
-
-        <div class="card-body"> Etiquetas:
-            <#if etiquetas?size == 0>
-                <p class="text-danger">No hay etiquetas relacionada a este Artículo</p>
-            <#else >
-                <#list etiquetas as e>
-                    <span class="badge badge-primary">${ e.etiqueta }</span>
-                </#list>
+    <div class="card mb-3">
+        <div class="card-header">
+            <h3>${articulo.titulo}</h3>
+            <#if usuarioValue.username == articulo.autor.username>
+                <a href="/editArticle/${ articulo.id }">
+                    <button class="btn btn-primary"><i class="fa fa-edit"></i> Editar</button>
+                </a>
             </#if>
         </div>
-        <div class="card-footer text-muted">
-            Autor: ${articulo.autor.username} - ${articulo.fecha}
-        </div>
+        <div class="card-body">
+            <div class="">
+                <p class="card-text" style="text-align: justify">${articulo.cuerpo}</p>
+            </div>
+
+            <div class="card-body"> Etiquetas:
+                <#if etiquetas?size == 0>
+                    <p class="text-danger">No hay etiquetas relacionada a este Artículo</p>
+                <#else >
+                    <#list etiquetas as e>
+                        <span class="badge badge-primary">${ e.etiqueta }</span>
+                    </#list>
+                </#if>
+            </div>
+
+            <div class="card-footer text-muted">
+                Autor: ${articulo.autor.username} - ${articulo.fecha}
+            </div>
         </div>
     </div>
         <div class="card">

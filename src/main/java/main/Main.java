@@ -6,7 +6,6 @@ import Estructura.Comentario;
 import Estructura.Etiqueta;
 import Estructura.Usuario;
 import freemarker.template.Configuration;
-import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.sql2o.Sql2oException;
@@ -15,11 +14,13 @@ import spark.Session;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static spark.Spark.*;
 
 public class Main {
     public static void main(String[] args) {
+        staticFileLocation("public");
         Configuration configuration = new Configuration(Configuration.VERSION_2_3_26);
         configuration.setClassForTemplateLoading(Main.class, "/templates");
         FreeMarkerEngine freemarkerEngine = new FreeMarkerEngine(configuration);
@@ -205,11 +206,42 @@ public class Main {
 
             Dao.getInstance().insertarArticulo(articulo);
 
-
-
             response.redirect("/");
             return null;
         });
 
+        get("/editArticle/:article_id", (request, response) -> {
+            Map<String, Object> model = new HashMap<>();
+            Articulo articulo =
+                    Dao.getInstance()
+                            .getArticulosPorId(Long.parseLong(request.params("article_id")));
+
+            model.put("titulo", "Editar Artículo");
+            model.put("usuarioValue", request.session().attribute("usuarioValue"));
+
+            model.put("articulo", articulo);
+            model.put("cadenaEtiquetas",
+                    articulo.getListaEtiquetas().stream()
+                            .map(Etiqueta::getEtiqueta)
+                            .collect(Collectors.joining(", ")));
+
+            return new ModelAndView(model, "editArticle.ftl");
+        }, freemarkerEngine);
+
+        post("/editArticle/:articulo_id", (request, response) -> {
+            Articulo articulo =
+                    Dao.getInstance()
+                            .getArticulosPorId(Long.parseLong(request.params("articulo_id")));
+
+            articulo.setTitulo(request.queryParams("titulo"));
+            articulo.setCuerpo(request.queryParams("cuerpo"));
+            articulo.setFecha(new Date());
+            //TODO - Arreglar el asunto de las etiquetas
+
+            Dao.getInstance().actualizarArticulo(articulo);
+
+            response.redirect("/show/" + articulo.getId());
+            return null;
+        });
     }
 }

@@ -116,11 +116,20 @@ public class Dao {
 
     public Articulo getArticulosPorId(Long id){
         String sql = "select * from Articulo where id = :articulo_id";
-        try(Connection conexion = sql2o.open()){
-            return conexion.createQuery(sql)
+        Articulo articulo = new Articulo();
+        try(Connection conexion = sql2o.open()) {
+            articulo = conexion.createQuery(sql)
                     .addParameter("articulo_id", id)
                     .executeAndFetchFirst(Articulo.class);
         }
+        String sql2 = "select * from Etiqueta where articulo = :articulo_id";
+        try(Connection conexion = sql2o.open()) {
+            articulo.setListaEtiquetas(conexion.createQuery(sql2)
+                    .addParameter("articulo_id", articulo.getId())
+                    .executeAndFetch(Etiqueta.class));
+        }
+
+        return articulo;
     }
 
     public List<Comentario> getComentarios(Long articulo){
@@ -150,18 +159,26 @@ public class Dao {
 
 
     public void actualizarArticulo(Articulo articulo){
-        String sql = "update Articulo set titulo = :titulo, set cuerpo = :cuerpo, set fecha = :fecha, set etiquetas = :etiquetas, set comentarios = :comentarios where articulo_id = :articulo_id";
+        String sql = "update Articulo SET titulo = :titulo, cuerpo = :cuerpo, fecha = :fecha WHERE id = :articulo_id";
 
-        try(Connection conexion = sql2o.open()){
-            conexion.createQuery(sql)
+        try(Connection conexion = sql2o.open()) { conexion.createQuery(sql)
                     .addParameter("titulo",articulo.getTitulo())
                     .addParameter("cuerpo",articulo.getCuerpo())
                     .addParameter("fecha",articulo.getFecha())
-                    .addParameter("etiquetas",articulo.getListaEtiquetas())
-                    .addParameter("comentarios",articulo.getListaComentarios())
                     .addParameter("articulo_id",articulo.getId())
                     .executeUpdate();
         }
+//
+//        String sql2 = "update Etiqueta SET articulo = :articulo_id where id = :etiqueta_id";
+//        try(Connection conexion = sql2o.open()){
+//            for (Etiqueta etiqueta : articulo.getListaEtiquetas()){
+//                conexion.createQuery(sql2)
+//                        .addParameter("articulo_id", articulo.getId())
+//                        .addParameter("etiqueta_id", etiqueta.getId())
+//                        .executeUpdate();
+//            }
+//        }
+
     }
 
     public void actualizarUsuario(Usuario usuario){
